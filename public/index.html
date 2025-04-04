@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP32 Device Control</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>UNESWA ENGINEERING</h1>
+    <div class="device-control">
+      <h2>Fan</h2>
+      <label><input type="radio" name="fan" value="on"> ON</label>
+      <label><input type="radio" name="fan" value="off"> OFF</label>
+    </div>
+    <div class="device-control">
+      <h2>Light</h2>
+      <label><input type="radio" name="light" value="on"> ON</label>
+      <label><input type="radio" name="light" value="off"> OFF</label>
+    </div>
+    <button id="save">Save</button>
+    <button id="voice-control">Start Voice Control</button>
+    <p id="voice-status">Voice control inactive</p>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loadState = async () => {
+        const response = await fetch('/api/get-state');
+        const data = await response.json();
+        document.querySelector(`input[name="fan"][value="${data.fan}"]`).checked = true;
+        document.querySelector(`input[name="light"][value="${data.light}"]`).checked = true;
+      };
+
+      const saveState = async () => {
+        const fanState = document.querySelector('input[name="fan"]:checked').value;
+        const lightState = document.querySelector('input[name="light"]:checked').value;
+
+        await fetch('/api/set-state', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fan: fanState, light: lightState })
+        });
+        alert('Device states updated!');
+      };
+
+      // Voice Control Integration
+      const voiceButton = document.getElementById('voice-control');
+      const voiceStatus = document.getElementById('voice-status');
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      
+      recognition.continuous = false;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        voiceStatus.textContent = 'Listening...';
+      };
+
+      recognition.onend = () => {
+        voiceStatus.textContent = 'Voice control inactive';
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript.toLowerCase();
+        voiceStatus.textContent = `Heard: "${transcript}"`;
+
+        if (transcript.includes('fan on')) {
+          document.querySelector('input[name="fan"][value="on"]').checked = true;
+          saveState();
+        } else if (transcript.includes('fan off')) {
+          document.querySelector('input[name="fan"][value="off"]').checked = true;
+          saveState();
+        } else if (transcript.includes('light on')) {
+          document.querySelector('input[name="light"][value="on"]').checked = true;
+          saveState();
+        } else if (transcript.includes('light off')) {
+          document.querySelector('input[name="light"][value="off"]').checked = true;
+          saveState();
+        }
+      };
+
+      voiceButton.addEventListener('click', () => {
+        recognition.start();
+      });
+
+      document.getElementById('save').addEventListener('click', saveState);
+      loadState();
+    });
+  </script>
+</body>
+</html>
