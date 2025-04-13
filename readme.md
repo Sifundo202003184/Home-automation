@@ -18,6 +18,12 @@ A web-based control panel for ESP32 devices with:
 ```bash
 npm install
 ```
+```bash
+npm install express
+```
+```bash
+npm install mongoose
+```
 
 ##  Database Setup
 
