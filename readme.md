@@ -37,6 +37,8 @@ npm install mongoose
   mongod --dbpath="C:\data\db"
   ```
 ### 2. Initialize Database
+####  i) Open Command Prompt in the project folder
+#### ii) Run the following commands
 ```bash
 node initialize.js
 ```
