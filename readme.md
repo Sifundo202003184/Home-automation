@@ -14,7 +14,7 @@ A web-based control panel for ESP32 devices with:
 
 ##  Installation
 
-### Install Dependencies
+### Install Dependencies in Command Prompt or Powershell
 ```bash
 npm install
 ```
