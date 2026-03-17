@@ -14,9 +14,15 @@ A web-based control panel for ESP32 devices with:
 
 ##  Installation
 
-### Install Dependencies
+### Install Dependencies in Command Prompt or Powershell
 ```bash
 npm install
+```
+```bash
+npm install express
+```
+```bash
+npm install mongoose
 ```
 
 ##  Database Setup
@@ -31,6 +37,8 @@ npm install
   mongod --dbpath="C:\data\db"
   ```
 ### 2. Initialize Database
+####  i) Open Command Prompt in the project folder
+#### ii) Run the following commands
 ```bash
 node initialize.js
 ```
